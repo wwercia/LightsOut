@@ -1,9 +1,13 @@
 package com.example.lightsout;
 
+import javafx.scene.control.Button;
+
 public class Field {
 
+    private Button button;
     private int x;
     private int y;
+    private boolean isLightOn;
 
     public int getX() {
         return x;
@@ -21,20 +25,32 @@ public class Field {
         this.y = y;
     }
 
-    public boolean isOn() {
-        return isOn;
+    public boolean isLightOn() {
+        return isLightOn;
     }
 
-    public void setOn(boolean on) {
-        isOn = on;
+    public void setLightOn(boolean lightOn) {
+        isLightOn = lightOn;
+    }
+    public Button getButton() {
+        return button;
     }
 
-    private boolean isOn;
+    public void setButton(Button button) {
+        this.button = button;
+    }
 
-    public Field(int x, int y, boolean isOn){
+    public Field(int x, int y, boolean isOn, Button button){
         this.x = x;
         this.y = y;
-        this.isOn = isOn;
+        this.isLightOn = isOn;
+        button.setPrefSize(60,60);
+        if(isOn){
+            button.getStyleClass().add("lightIsOn");
+        }else {
+            button.getStyleClass().add("lightIsOff");
+        }
+        this.button = button;
     }
 
 }

@@ -1,5 +1,7 @@
 package com.example.lightsout;
 
+import javafx.scene.control.Button;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +23,7 @@ public class Map {
     }
 
     // czytuje wszystkie mapy aby potem mozna było wylosować jakąś
-    private void loadMaps() throws IOException {
+    public void loadMaps() throws IOException {
 
         InputStream inputStream = getClass().getResourceAsStream("/com/example/lightsout/maps.txt");
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -39,7 +41,8 @@ public class Map {
                 for (int i = 0; i < map.length; i++) {
                     for (int j = 0; j < map[i].length; j++) {
                         boolean isOn = areOn.get(areOnIndex).equals("1");
-                        map[i][j] = new Field(i, j, isOn);
+                        Button button = new Button();
+                        map[i][j] = new Field(i, j, isOn, button);
                         areOnIndex++;
                     }
                 }
@@ -52,7 +55,7 @@ public class Map {
     public void displayMap(Field[][] mapp) {
         for (int i = 0; i < mapp.length; i++) {
             for (int j = 0; j < mapp[i].length; j++) {
-                String ch = mapp[i][j].isOn() ? "1" : "0";
+                String ch = mapp[i][j].isLightOn() ? "1" : "0";
                 System.out.print(ch);
             }
             System.out.println();

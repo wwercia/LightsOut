@@ -1,0 +1,9 @@
+.lightIsOn {
+    -fx-background-color: lightgrey;
+}
+.lightIsOff {
+    -fx-background-color: grey;
+}
+.main-box {
+    -fx-background-color: #303030;
+}

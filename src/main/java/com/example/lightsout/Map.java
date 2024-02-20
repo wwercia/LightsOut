@@ -15,7 +15,7 @@ public class Map {
     private Field[][] map;
     private ArrayList<Field[][]> maps = new ArrayList<>();
 
-    public Field[][] getMap(){
+    public Field[][] getNewMap(){
         Random random = new Random();
         int number = random.nextInt(maps.size());
         map = maps.get(number);
@@ -71,15 +71,12 @@ public class Map {
         return maps;
     }
 
-    public void setMaps(ArrayList<Field[][]> maps) {
-        this.maps = maps;
-    }
 
     public static void main(String[] args) throws IOException {
         Map map = new Map();
         map.loadMaps();
         System.out.println("Our random map:");
-        Field[][] m = map.getMap();
+        Field[][] m = map.getNewMap();
         map.displayMap(m);
     }
 

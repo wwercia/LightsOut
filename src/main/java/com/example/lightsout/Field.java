@@ -40,7 +40,7 @@ public class Field {
         this.button = button;
     }
 
-    public Field(int x, int y, boolean isOn, Button button){
+    public Field(int y, int x, boolean isOn, Button button){
         this.x = x;
         this.y = y;
         this.isLightOn = isOn;

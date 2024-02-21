@@ -46,37 +46,9 @@ public class View {
     }
 
     private void changeButtonsColors(Field field) {
-        field.setLightOn(!field.isLightOn());
-        if (field.isLightOn()) {
-            field.getButton().getStyleClass().remove("lightIsOff");
-            field.getButton().getStyleClass().add("lightIsOn");
-        } else {
-            field.getButton().getStyleClass().remove("lightIsOn");
-            field.getButton().getStyleClass().add("lightIsOff");
-        }
-
-        int y = -2;
-        int x = -2;
-
-        //to chyba niepotrzebme
-        for (int i = 0; i < fields.length; i++) {
-            for (int j = 0; j < fields[i].length; j++) {
-                Field value = fields[i][j];
-                if (value.getX() == field.getX() && value.getY() == field.getY()) {
-                    y = field.getY();
-                    x = field.getX();
-                    break;
-                }
-            }
-        }
-
-
-
-        y = field.getY();
-        x = field.getX();
-        System.out.println("y: " + y);
-        System.out.println("x: " + x);
-
+        changeColorOfButton(field);
+        int y = field.getY();
+        int x = field.getX();
         // czy trzeba zmienic te przyciski czy wychodziłoby poza plansze
         // np jesli x to 0 to znaczy ze klikniety guzik jest z lewego brzegu a to oznacza ze po jego lewej nie ma guzika zadnego
         // czyli nie trzeba zmieniac guzika z lewej strony bo go nie ma
@@ -84,7 +56,6 @@ public class View {
         boolean left = true;
         boolean right = true;
         boolean down = true;
-
         if (y == 0){
             up = false;
         }
@@ -97,78 +68,51 @@ public class View {
         if(x == 4){
             right = false;
         }
+        changeColorOfButtonsAroundClickedButton(x, y, left, right, up, down);
+    }
 
+    private void changeColorOfButton(Field field){
+        field.setLightOn(!field.isLightOn());
+        if (field.isLightOn()) {
+            field.getButton().getStyleClass().remove("lightIsOff");
+            field.getButton().getStyleClass().add("lightIsOn");
+        } else {
+            field.getButton().getStyleClass().remove("lightIsOn");
+            field.getButton().getStyleClass().add("lightIsOff");
+        }
+    }
 
-        // zmieniamy kolor tych które trzeba
-
-        // teraz jakos zmiejszyc indeks o jeden aby znalezc guzik odpowiedni z lewej jesli po lewo to true
-
-        System.out.println("left: " + left);
+    private void changeColorOfButtonsAroundClickedButton(int x, int y, boolean left, boolean right, boolean up, boolean down){
         if(left){
-            int yy = y;
             int xx = x - 1;
-            System.out.println("yy: " + yy);
-            System.out.println("xx: " + xx);
-            Button b = fields[yy][xx].getButton();
-            fields[yy][xx].setLightOn(!fields[yy][xx].isLightOn());
-            if (fields[yy][xx].isLightOn()) {
-                b.getStyleClass().remove("lightIsOff");
-                b.getStyleClass().add("lightIsOn");
-            } else {
-                b.getStyleClass().remove("lightIsOn");
-                b.getStyleClass().add("lightIsOff");
-            }
+            Button b = fields[y][xx].getButton();
+            change(xx, y, b);
         }
-
         if(right){
-            int yy = y;
             int xx = x + 1;
-            System.out.println("yy: " + yy);
-            System.out.println("xx: " + xx);
-            Button b = fields[yy][xx].getButton();
-            fields[yy][xx].setLightOn(!fields[yy][xx].isLightOn());
-            if (fields[yy][xx].isLightOn()) {
-                b.getStyleClass().remove("lightIsOff");
-                b.getStyleClass().add("lightIsOn");
-            } else {
-                b.getStyleClass().remove("lightIsOn");
-                b.getStyleClass().add("lightIsOff");
-            }
+            Button b = fields[y][xx].getButton();
+            change(xx, y, b);
         }
-
         if(up){
             int yy = y - 1;
-            int xx = x;
-            System.out.println("yy: " + yy);
-            System.out.println("xx: " + xx);
-            Button b = fields[yy][xx].getButton();
-            fields[yy][xx].setLightOn(!fields[yy][xx].isLightOn());
-            if (fields[yy][xx].isLightOn()) {
-                b.getStyleClass().remove("lightIsOff");
-                b.getStyleClass().add("lightIsOn");
-            } else {
-                b.getStyleClass().remove("lightIsOn");
-                b.getStyleClass().add("lightIsOff");
-            }
+            Button b = fields[yy][x].getButton();
+            change(x, yy, b);
         }
         if(down){
             int yy = y + 1;
-            int xx = x;
-            System.out.println("yy: " + yy);
-            System.out.println("xx: " + xx);
-            Button b = fields[yy][xx].getButton();
-            fields[yy][xx].setLightOn(!fields[yy][xx].isLightOn());
-            if (fields[yy][xx].isLightOn()) {
-                b.getStyleClass().remove("lightIsOff");
-                b.getStyleClass().add("lightIsOn");
-            } else {
-                b.getStyleClass().remove("lightIsOn");
-                b.getStyleClass().add("lightIsOff");
-            }
+            Button b = fields[yy][x].getButton();
+            change(x, yy, b);
         }
-
-
-
     }
 
+    private void change(int xx, int yy, Button b){
+        fields[yy][xx].setLightOn(!fields[yy][xx].isLightOn());
+        if (fields[yy][xx].isLightOn()) {
+            b.getStyleClass().remove("lightIsOff");
+            b.getStyleClass().add("lightIsOn");
+        } else {
+            b.getStyleClass().remove("lightIsOn");
+            b.getStyleClass().add("lightIsOff");
+        }
+    }
 }

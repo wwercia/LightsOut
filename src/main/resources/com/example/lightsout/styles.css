@@ -7,3 +7,14 @@
 .main-box {
     -fx-background-color: #303030;
 }
+.text {
+    -fx-text-fill: lightgrey;
+    -fx-font-size: 20px;
+}
+.play-again-button {
+    -fx-background-color: lightgrey;
+    -fx-text-fill: black;
+    -fx-font-size: 10px;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 5px;
+}

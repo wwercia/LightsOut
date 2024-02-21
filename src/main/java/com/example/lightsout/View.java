@@ -1,11 +1,16 @@
 package com.example.lightsout;
 
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class View {
 
@@ -50,8 +55,8 @@ public class View {
         int y = field.getY();
         int x = field.getX();
         // czy trzeba zmienic te przyciski czy wychodziłoby poza plansze
-        // np jesli x to 0 to znaczy ze klikniety guzik jest z lewego brzegu a to oznacza ze po jego lewej nie ma guzika zadnego
-        // czyli nie trzeba zmieniac guzika z lewej strony bo go nie ma
+        // np jeśli x to 0 to znaczy ze klikniety guzik jest z lewego brzegu a to oznacza ze po jego lewej nie ma guzika żadnego
+        // czyli nie trzeba zmieniać guzika z lewej strony bo go nie ma
         boolean up = true;
         boolean left = true;
         boolean right = true;
@@ -69,6 +74,7 @@ public class View {
             right = false;
         }
         changeColorOfButtonsAroundClickedButton(x, y, left, right, up, down);
+        checkIfEveryLightIsOff();
     }
 
     private void changeColorOfButton(Field field){
@@ -114,5 +120,52 @@ public class View {
             b.getStyleClass().remove("lightIsOn");
             b.getStyleClass().add("lightIsOff");
         }
+    }
+
+    private void checkIfEveryLightIsOff(){
+        boolean areAllLightsOff = true;
+        for (Field[] field : fields) {
+            for (Field value : field) {
+                if(value.isLightOn()){
+                    areAllLightsOff = false;
+                    break;
+                }
+            }
+        }
+        if(areAllLightsOff){
+            System.out.println("Gratulacje wyłączyłaś/eś wszystkie światła! :)");
+            System.out.println();
+            windowAfterWining();
+        }
+    }
+
+    private void windowAfterWining(){
+
+        Stage optionsStage = new Stage();
+        optionsStage.initModality(Modality.APPLICATION_MODAL);
+        optionsStage.setTitle("You won!");
+
+        VBox main = new VBox(15);
+        main.setAlignment(Pos.CENTER);
+        main.getStyleClass().add("main-box");
+
+        Label congratulationsWord = new Label("Congratulations!");
+        Label youWonWord = new Label("You won!");
+        congratulationsWord.getStyleClass().add("text");
+        youWonWord.getStyleClass().add("text");
+        Button playAgainButton = new Button("Play again");
+
+        playAgainButton.setOnAction(actionEvent -> {
+            mainBox.getChildren().clear();
+            initView();
+            optionsStage.close();
+        });
+
+        main.getChildren().addAll(congratulationsWord, youWonWord, playAgainButton);
+        Scene optionsScene = new Scene(main, 300, 200);
+        optionsScene.getStylesheets().add(Objects.requireNonNull(App.class.getResource("styles.css")).toExternalForm());
+        optionsStage.setScene(optionsScene);
+        optionsStage.showAndWait();
+
     }
 }

@@ -71,13 +71,4 @@ public class Map {
         return maps;
     }
 
-
-    public static void main(String[] args) throws IOException {
-        Map map = new Map();
-        map.loadMaps();
-        System.out.println("Our random map:");
-        Field[][] m = map.getNewMap();
-        map.displayMap(m);
-    }
-
 }

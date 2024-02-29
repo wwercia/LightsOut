@@ -10,12 +10,17 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.Objects;
 
 public class View {
 
-    private final VBox mainBox = new VBox();
+    private final VBox mainBox = new VBox(25);
+    private VBox boxForMap;
     private Field[][] fields;
+    private Map map;
+    private Field[][] startCombination;
+    private int numberOfMoves = 0;
 
 
     public VBox initView() {
@@ -23,18 +28,43 @@ public class View {
         mainBox.getStyleClass().add("main-box");
         mainBox.setAlignment(Pos.CENTER_RIGHT);
 
-        Map map = new Map();
+        map = new Map();
         try {
             map.loadMaps();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
+        HBox boxForButtons = new HBox(5);
+        boxForButtons.setAlignment(Pos.CENTER);
+        Button restartFieldsButton = new Button("clear all");
+        Button changeMapButton = new Button("new game");
+        restartFieldsButton.setStyle("-fx-font-size: 13px;");
+        changeMapButton.setStyle("-fx-font-size: 13px;");
+        boxForButtons.getChildren().addAll(restartFieldsButton, changeMapButton);
+
+        restartFieldsButton.setOnAction(event -> moveAllFieldsToStart());
+        changeMapButton.setOnAction(event -> changeMap());
+
         System.out.println("Our random map:");
         fields = map.getNewMap();
-        map.displayMap(fields);
 
-        VBox boxForMap = new VBox(10);
+
+        startCombination = new Field[5][5];
+        for (int i = 0; i < fields.length; i++) {
+            for (int j = 0; j < fields[i].length; j++) {
+                Field value = fields[i][j];
+                Field newField = new Field(value.getX(), value.getY(), value.isLightOn(), new Button());
+                startCombination[i][j] = newField;
+            }
+        }
+
+
+
+        map.displayMap(fields);
+        numberOfMoves = 0;
+
+        boxForMap = new VBox(10);
         HBox box = new HBox(10);
         for (Field[] field : fields) {
             box.setAlignment(Pos.CENTER);
@@ -46,15 +76,52 @@ public class View {
             boxForMap.getChildren().add(box);
             box = new HBox(10);
         }
-        mainBox.getChildren().add(boxForMap);
+        mainBox.getChildren().addAll(boxForButtons, boxForMap);
         return mainBox;
     }
 
+    private void changeMap(){
+        mainBox.getChildren().clear();
+        initView();
+    }
+    private void moveAllFieldsToStart(){
+        mainBox.getChildren().remove(boxForMap);
+        numberOfMoves = 0;
+        System.out.println();
+        map.displayMap(fields);
+        map.displayMap(startCombination);
+        boxForMap = new VBox(10);
+        HBox box = new HBox(10);
+        for (int i = 0; i < startCombination.length; i++) {
+            box.setAlignment(Pos.CENTER);
+            for (int j = 0; j < fields[i].length; j++) {
+                Field oldValue = fields[i][j];
+                Field startProps = startCombination[i][j];
+                if(oldValue.isLightOn() != startProps.isLightOn()){
+                    if(startProps.isLightOn()){
+                        oldValue.getButton().getStyleClass().remove("lightIsOff");
+                        oldValue.getButton().getStyleClass().add("lightIsOn");
+                    }else {
+                        oldValue.getButton().getStyleClass().remove("lightIsOn");
+                        oldValue.getButton().getStyleClass().add("lightIsOff");
+                    }
+
+                }
+                oldValue.setLightOn(startProps.isLightOn());
+                box.getChildren().add(oldValue.getButton());
+            }
+            boxForMap.getChildren().add(box);
+            box = new HBox(10);
+        }
+        mainBox.getChildren().add(boxForMap);
+    }
+
     private void changeButtonsColors(Field field) {
+        numberOfMoves++;
         changeColorOfButton(field);
         int y = field.getY();
         int x = field.getX();
-        // czy trzeba zmienic te przyciski czy wychodziłoby poza plansze
+        // sprawdzam czy trzeba zmienic te przyciski czy wychodziłoby poza plansze
         // np jeśli x to 0 to znaczy ze klikniety guzik jest z lewego brzegu a to oznacza ze po jego lewej nie ma guzika żadnego
         // czyli nie trzeba zmieniać guzika z lewej strony bo go nie ma
         boolean up = true;
@@ -145,15 +212,18 @@ public class View {
         optionsStage.initModality(Modality.APPLICATION_MODAL);
         optionsStage.setTitle("You won!");
 
-        VBox main = new VBox(15);
+        VBox main = new VBox(10);
         main.setAlignment(Pos.CENTER);
         main.getStyleClass().add("main-box");
 
         Label congratulationsWord = new Label("Congratulations!");
         Label youWonWord = new Label("You won!");
+        Label movesWord = new Label("Moves: " + numberOfMoves);
         congratulationsWord.getStyleClass().add("text");
         youWonWord.getStyleClass().add("text");
+        movesWord.getStyleClass().add("text");
         Button playAgainButton = new Button("Play again");
+        playAgainButton.getStyleClass().add("play-again-button");
 
         playAgainButton.setOnAction(actionEvent -> {
             mainBox.getChildren().clear();
@@ -161,7 +231,7 @@ public class View {
             optionsStage.close();
         });
 
-        main.getChildren().addAll(congratulationsWord, youWonWord, playAgainButton);
+        main.getChildren().addAll(congratulationsWord, youWonWord, movesWord, playAgainButton);
         Scene optionsScene = new Scene(main, 300, 200);
         optionsScene.getStylesheets().add(Objects.requireNonNull(App.class.getResource("styles.css")).toExternalForm());
         optionsStage.setScene(optionsScene);

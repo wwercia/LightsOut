@@ -18,3 +18,10 @@
     -fx-padding: 8px 15px;
     -fx-background-radius: 5px;
 }
+.main-button {
+    -fx-background-color: lightblue;
+    -fx-text-fill: black;
+    -fx-font-size: 10px;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 5px;
+}

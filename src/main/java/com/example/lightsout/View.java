@@ -11,18 +11,28 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class View {
 
     private final VBox mainBox = new VBox(25);
     private VBox boxForMap;
-    private Field[][] fields;
+    private Field[][] fields = new Field[5][5];
     private Map map;
+    //private Map previousMap = new Map();
+
     private Field[][] startCombination;
     private int numberOfMoves = 0;
 
 
+
+    private int[][] actualMap = new int[5][5];
+    private int[][] previousMap = new int[5][5];
+
+
+    // to pole potrzebne aby wiedziec czy jest to pierwszy raz odpalana metodai nie ma jeszcze previousMap
+    private int count = 0;
     public VBox initView() {
 
         mainBox.getStyleClass().add("main-box");
@@ -46,8 +56,42 @@ public class View {
         restartFieldsButton.setOnAction(event -> moveAllFieldsToStart());
         changeMapButton.setOnAction(event -> changeMap());
 
-        System.out.println("Our random map:");
         fields = map.getNewMap();
+
+        actualMap = map.getMap0And1(fields);
+        if(count == 0){
+            previousMap = actualMap;
+        }else {
+
+            boolean isTheSame = true;
+            for (int i = 0; i < actualMap.length; i++) {
+                for (int j = 0; j < actualMap[i].length; j++) {
+                    if(actualMap[i][j] != previousMap[i][j]){
+                        isTheSame = false;
+                    }
+                }
+            }
+
+            while (isTheSame){
+                fields = map.getNewMap();
+                actualMap = map.getMap0And1(fields);
+                isTheSame = true;
+                for (int i = 0; i < actualMap.length; i++) {
+                    for (int j = 0; j < actualMap[i].length; j++) {
+                        if(actualMap[i][j] != previousMap[i][j]){
+                            isTheSame = false;
+                        }
+                    }
+                }
+                System.out.println("losuje ponownie bo była ta sama:");
+                map.displayMap(fields);
+                previousMap = actualMap;
+            }
+            actualMap = map.getMap0And1(fields);
+            previousMap = actualMap;
+
+        }
+        count++;
 
 
         startCombination = new Field[5][5];
@@ -60,8 +104,7 @@ public class View {
         }
 
 
-
-        map.displayMap(fields);
+        //map.displayMap(fields);
         numberOfMoves = 0;
 
         boxForMap = new VBox(10);
@@ -80,11 +123,12 @@ public class View {
         return mainBox;
     }
 
-    private void changeMap(){
+    private void changeMap() {
         mainBox.getChildren().clear();
         initView();
     }
-    private void moveAllFieldsToStart(){
+
+    private void moveAllFieldsToStart() {
         mainBox.getChildren().remove(boxForMap);
         numberOfMoves = 0;
         System.out.println();
@@ -97,11 +141,11 @@ public class View {
             for (int j = 0; j < fields[i].length; j++) {
                 Field oldValue = fields[i][j];
                 Field startProps = startCombination[i][j];
-                if(oldValue.isLightOn() != startProps.isLightOn()){
-                    if(startProps.isLightOn()){
+                if (oldValue.isLightOn() != startProps.isLightOn()) {
+                    if (startProps.isLightOn()) {
                         oldValue.getButton().getStyleClass().remove("lightIsOff");
                         oldValue.getButton().getStyleClass().add("lightIsOn");
-                    }else {
+                    } else {
                         oldValue.getButton().getStyleClass().remove("lightIsOn");
                         oldValue.getButton().getStyleClass().add("lightIsOff");
                     }
@@ -128,23 +172,23 @@ public class View {
         boolean left = true;
         boolean right = true;
         boolean down = true;
-        if (y == 0){
+        if (y == 0) {
             up = false;
         }
-        if (y == 4){
+        if (y == 4) {
             down = false;
         }
-        if(x == 0){
+        if (x == 0) {
             left = false;
         }
-        if(x == 4){
+        if (x == 4) {
             right = false;
         }
         changeColorOfButtonsAroundClickedButton(x, y, left, right, up, down);
         checkIfEveryLightIsOff();
     }
 
-    private void changeColorOfButton(Field field){
+    private void changeColorOfButton(Field field) {
         field.setLightOn(!field.isLightOn());
         if (field.isLightOn()) {
             field.getButton().getStyleClass().remove("lightIsOff");
@@ -155,30 +199,30 @@ public class View {
         }
     }
 
-    private void changeColorOfButtonsAroundClickedButton(int x, int y, boolean left, boolean right, boolean up, boolean down){
-        if(left){
+    private void changeColorOfButtonsAroundClickedButton(int x, int y, boolean left, boolean right, boolean up, boolean down) {
+        if (left) {
             int xx = x - 1;
             Button b = fields[y][xx].getButton();
             change(xx, y, b);
         }
-        if(right){
+        if (right) {
             int xx = x + 1;
             Button b = fields[y][xx].getButton();
             change(xx, y, b);
         }
-        if(up){
+        if (up) {
             int yy = y - 1;
             Button b = fields[yy][x].getButton();
             change(x, yy, b);
         }
-        if(down){
+        if (down) {
             int yy = y + 1;
             Button b = fields[yy][x].getButton();
             change(x, yy, b);
         }
     }
 
-    private void change(int xx, int yy, Button b){
+    private void change(int xx, int yy, Button b) {
         fields[yy][xx].setLightOn(!fields[yy][xx].isLightOn());
         if (fields[yy][xx].isLightOn()) {
             b.getStyleClass().remove("lightIsOff");
@@ -189,24 +233,24 @@ public class View {
         }
     }
 
-    private void checkIfEveryLightIsOff(){
+    private void checkIfEveryLightIsOff() {
         boolean areAllLightsOff = true;
         for (Field[] field : fields) {
             for (Field value : field) {
-                if(value.isLightOn()){
+                if (value.isLightOn()) {
                     areAllLightsOff = false;
                     break;
                 }
             }
         }
-        if(areAllLightsOff){
+        if (areAllLightsOff) {
             System.out.println("Gratulacje wyłączyłaś/eś wszystkie światła! :)");
             System.out.println();
             windowAfterWining();
         }
     }
 
-    private void windowAfterWining(){
+    private void windowAfterWining() {
 
         Stage optionsStage = new Stage();
         optionsStage.initModality(Modality.APPLICATION_MODAL);

@@ -12,14 +12,14 @@ import java.util.Random;
 
 public class Map {
 
-    private Field[][] map;
+    private Field[][] currentMap;
     private ArrayList<Field[][]> maps = new ArrayList<>();
 
     public Field[][] getNewMap(){
         Random random = new Random();
         int number = random.nextInt(maps.size());
-        map = maps.get(number);
-        return map;
+        currentMap = maps.get(number);
+        return currentMap;
     }
 
     // czytuje wszystkie mapy aby potem mozna było wylosować jakąś
@@ -62,13 +62,27 @@ public class Map {
         }
         System.out.println();
     }
+    public int[][] getMap0And1(Field[][] mapp) {
+        int[][] map = new int[5][5];
+        for (int i = 0; i < mapp.length; i++) {
+            for (int j = 0; j < mapp[i].length; j++) {
+                String ch = mapp[i][j].isLightOn() ? "1" : "0";
+                map[i][j] = Integer.parseInt(ch);
+            }
+        }
+        return map;
+    }
 
-    public void setMap(Field[][] map) {
-        this.map = map;
+    public void setCurrentMap(Field[][] currentMap) {
+        this.currentMap = currentMap;
+    }
+    public Field[][] getCurrentMap() {
+        return currentMap;
     }
 
     public ArrayList<Field[][]> getMaps() {
         return maps;
     }
+
 
 }

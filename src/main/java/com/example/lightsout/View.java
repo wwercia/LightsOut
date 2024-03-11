@@ -4,11 +4,14 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -16,7 +19,7 @@ import java.util.Objects;
 
 public class View {
 
-    private final VBox mainBox = new VBox(25);
+    private final VBox mainBox = new VBox(0);
     private VBox boxForMap;
     private Field[][] fields = new Field[5][5];
     private Map map;
@@ -52,6 +55,14 @@ public class View {
         restartFieldsButton.setStyle("-fx-font-size: 13px;");
         changeMapButton.setStyle("-fx-font-size: 13px;");
         boxForButtons.getChildren().addAll(restartFieldsButton, changeMapButton);
+
+        HBox boxForInfoImage = new HBox();
+        boxForInfoImage.setAlignment(Pos.BASELINE_RIGHT);
+
+        Button buttonforImage = new Button("?");
+        buttonforImage.setStyle("-fx-font-size: 13px;");
+        buttonforImage.setOnAction(event -> showImagewindow());
+        boxForInfoImage.getChildren().add(buttonforImage);
 
         restartFieldsButton.setOnAction(event -> moveAllFieldsToStart());
         changeMapButton.setOnAction(event -> changeMap());
@@ -119,8 +130,28 @@ public class View {
             boxForMap.getChildren().add(box);
             box = new HBox(10);
         }
-        mainBox.getChildren().addAll(boxForButtons, boxForMap);
+        mainBox.getChildren().addAll(boxForButtons, boxForInfoImage, boxForMap);
         return mainBox;
+    }
+
+    private void showImagewindow(){
+        Stage optionsStage = new Stage();
+        optionsStage.initModality(Modality.APPLICATION_MODAL);
+        optionsStage.setTitle("hint");
+
+        VBox main = new VBox(10);
+        main.setAlignment(Pos.CENTER);
+        main.getStyleClass().add("main-box");
+
+        File file = new File("C:\\Users\\wwerc\\IdeaProjects\\LightsOut\\src\\main\\resources\\com\\example\\lightsout\\solutionLightsOut.png");
+        Image image = new Image(file.toURI().toString());
+        ImageView imageView = new ImageView(image);
+
+        main.getChildren().add(imageView);
+        Scene optionsScene = new Scene(main, 300, 200);
+        optionsScene.getStylesheets().add(Objects.requireNonNull(App.class.getResource("styles.css")).toExternalForm());
+        optionsStage.setScene(optionsScene);
+        optionsStage.showAndWait();
     }
 
     private void changeMap() {

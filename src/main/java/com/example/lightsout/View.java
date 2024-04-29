@@ -51,7 +51,9 @@ public class View {
         HBox boxForButtons = new HBox(5);
         boxForButtons.setAlignment(Pos.CENTER);
         Button restartFieldsButton = new Button("clear all");
+        restartFieldsButton.getStyleClass().add("play-again-button");
         Button changeMapButton = new Button("new game");
+        changeMapButton.getStyleClass().add("play-again-button");
         restartFieldsButton.setStyle("-fx-font-size: 13px;");
         changeMapButton.setStyle("-fx-font-size: 13px;");
         boxForButtons.getChildren().addAll(restartFieldsButton, changeMapButton);
@@ -60,6 +62,7 @@ public class View {
         boxForInfoImage.setAlignment(Pos.BASELINE_RIGHT);
 
         Button buttonforImage = new Button("?");
+        buttonforImage.getStyleClass().add("play-again-button");
         buttonforImage.setStyle("-fx-font-size: 13px;");
         buttonforImage.setOnAction(event -> showImagewindow());
         boxForInfoImage.getChildren().add(buttonforImage);
@@ -136,22 +139,22 @@ public class View {
 
     private void showImagewindow(){
         Stage optionsStage = new Stage();
-        optionsStage.initModality(Modality.APPLICATION_MODAL);
+        //optionsStage.initModality(Modality.APPLICATION_MODAL);
         optionsStage.setTitle("hint");
 
         VBox main = new VBox(10);
         main.setAlignment(Pos.CENTER);
         main.getStyleClass().add("main-box");
 
-        File file = new File("C:\\Users\\wwerc\\IdeaProjects\\LightsOut\\src\\main\\resources\\com\\example\\lightsout\\solutionLightsOut.png");
+        File file = new File("C:\\Users\\wwerc\\IdeaProjects\\LightsOut\\src\\main\\resources\\com\\example\\lightsout\\hint.png");
         Image image = new Image(file.toURI().toString());
         ImageView imageView = new ImageView(image);
 
         main.getChildren().add(imageView);
-        Scene optionsScene = new Scene(main, 300, 200);
+        Scene optionsScene = new Scene(main, 450, 350);
         optionsScene.getStylesheets().add(Objects.requireNonNull(App.class.getResource("styles.css")).toExternalForm());
         optionsStage.setScene(optionsScene);
-        optionsStage.showAndWait();
+        optionsStage.show();
     }
 
     private void changeMap() {
